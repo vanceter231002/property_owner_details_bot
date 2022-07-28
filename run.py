@@ -1,6 +1,6 @@
 
 from find_info import find_info
-from find_info import excel_read_write
+from excel_read_write import excel_read_write
 from ordered_set import OrderedSet
 
 
@@ -42,20 +42,16 @@ if __name__ == '__main__':
             name_list=rw.fetch_names(i)
             name_list=list(filter(lambda a:a!="",name_list))
             print(name_list[0])
+            unit_sep_addresses=rw.fetch_addresses(i)
+            city_states=rw.fetch_city_states(i)
+            units=rw.fetch_units(i)
             addresses=OrderedSet()
-            add=f"{rw.fetch_address(i).lower()} {rw.fetch_city_state(i).lower()}"
-            if(rw.fetch_unit(i)!=""):
-                add+=f" unit {rw.fetch_unit(i)}"
-            addresses.add(add)
-            alt_add=f"{rw.fetch_alt_address(i).lower()} {rw.fetch_alt_city_state(i).lower()}"
-            if(rw.fetch_alt_unit(i)!=""):
-                alt_add+=f" unit {rw.fetch_alt_unit(i)}"
-            addresses.add(alt_add)
-            city_states=OrderedSet()
-            city_state=rw.fetch_city_state(i)
-            alt_city_state=rw.fetch_alt_city_state(i)
-            city_states.add(city_state.lower())
-            city_states.add(alt_city_state.lower())
+            for j in range(len(units)):
+                add=f"{unit_sep_addresses[j].lower()} {city_states[j].lower()}"
+                if(units[j]!=-1):
+                    add+=f" unit {units[j]}"
+                addresses.add(add)
+            city_states=OrderedSet(city_states)
             if(name_list):
                 func(browser,name_list,addresses,city_states)
                 l=browser.fetch_details()
