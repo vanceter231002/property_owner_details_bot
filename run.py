@@ -2,6 +2,7 @@
 from find_info import find_info
 from excel_read_write import excel_read_write
 from ordered_set import OrderedSet
+import re
 
 
 def print_details(phones,emails):
@@ -33,10 +34,30 @@ def func(browser,names,addresses,city_states):
         return(False)
 
 if __name__ == '__main__':
-    rw=excel_read_write.ExcelReadWrite("../Files/copy.xlsx",0)
-    browser=find_info.FindInfo()
 
-    for i in range(186,190):
+    browser=find_info.FindInfo()
+    filepath=input("Enter the file path: ")
+    savepath=input("Enter save file path: ")
+    rw=excel_read_write.ExcelReadWrite(filepath,0)
+    i=input("1.Select from existing profiles\n2.Create new profile\n")
+    if(i=="1"):
+        while(True):
+            try:
+                rw.set_profile()
+                break
+            except:
+                print("Invalid profile name")
+                
+    elif(i=="2"):
+        rw.create_profile()
+    else:
+        print("Invalid Option")
+        exit()
+    
+    row_start=int(input("Enter starting row number: "))
+    row_end=int(input("Enter ending row number: "))
+    input("Press anything to start execution")
+    for i in range(row_start-1,row_end):
         try:
             l=[[],[]]
             name_list=rw.fetch_names(i)
@@ -47,7 +68,10 @@ if __name__ == '__main__':
             units=rw.fetch_units(i)
             addresses=OrderedSet()
             for j in range(len(units)):
-                add=f"{unit_sep_addresses[j].lower()} {city_states[j].lower()}"
+                if(city_states):
+                    add=f"{unit_sep_addresses[j].lower()} {city_states[j].lower()}"
+                else:
+                    add=unit_sep_addresses[j].lower()
                 if(units[j]!=-1):
                     add+=f" unit {units[j]}"
                 addresses.add(add)
@@ -65,6 +89,6 @@ if __name__ == '__main__':
         except:
             raise
 
-    rw.save("../Files/copy.xlsx")
+    rw.save(savepath)
     print("Details Saved")
     input()

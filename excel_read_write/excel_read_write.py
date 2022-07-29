@@ -1,13 +1,12 @@
 from openpyxl import load_workbook
 import json
-
-from ordered_set import OrderedSet
+import re
 
 class ExcelReadWrite:
         def __init__(self,filepath,sheet_no):
             self.wb=load_workbook(filepath)
             self.sheet=self.wb.worksheets[sheet_no]
-            self.set_row_list()
+            self.rows=list(self.sheet.rows)
             f=open("excel_read_write/profiles.json")
             self.profiles=json.load(f)
             f.close()
@@ -20,9 +19,13 @@ class ExcelReadWrite:
         def print_profile_list(self):
             for profile in self.profiles["names"]:
                 print(profile)
+            print("")
         
         def create_profile(self):
             name=input("Enter the name of profile: ")
+            while(name in self.profiles["names"]):
+                print("Profile name already in use")
+                name=input("Enter the name of profile: ")
             d={}
             print("Enter column letter for the following: ")
             n=input("Enter number of Names: ")
@@ -34,17 +37,18 @@ class ExcelReadWrite:
                 l2.append(self.get_column(input(f"Last Name {i+1}: ")))
             d['fname_columns']=l1
             d['lname_columns']=l2
-            d["full_address"]=input("Full address? (Y or N): ").lower()
             n=input("Enter number of Addresses: ")
             n=int(n)
             l1=[]
             l2=[]
             l3=[]
             for i in range(n):
-                l1.append(self.get_column(input(f'Address {i+1}: ')))
-                if(d["full_address"]=="n"):
-                    l2.append(self.get_column(input(f'City {i+1}: ')))
-                    l3.append(self.get_column(input(f'State {i+1}: ')))
+                l1.append([self.get_column(input(f'Address {i+1}: ')),-1])
+                x=input("Unit column?(Y or N)").lower()
+                if(x=="y"):
+                    l1[i][1]=self.get_column(input("Unit Column: "))
+                l2.append(self.get_column(input(f'City {i+1}: ')))
+                l3.append(self.get_column(input(f'State {i+1}: ')))
             d['address_columns']=l1
             d['city_columns']=l2
             d['state_columns']=l3
@@ -63,10 +67,11 @@ class ExcelReadWrite:
             self.column_info=d
             self.profiles[name]=d
             self.profiles["names"].append(name)
-            f=open("excel-read-write/profiles.json")
-            json.dump(self.profiles,f,indent=4)
+            f=open("excel_read_write/profiles.json","w")
+            json.dump(self.profiles,f,indent=2)
 
         def get_column(self,string:str):
+            string=string.upper()
             index=0
             string=string[::-1]
             for i in range(len(string)):
@@ -76,13 +81,6 @@ class ExcelReadWrite:
         def no_of_rows(self):
             return(len(self.rows))
 
-        def set_row_list(self):
-            i=0
-            for cell in self.sheet['E']:
-                if(cell.value==None):
-                    break
-                i+=1
-            self.rows=list(self.sheet.rows)[:i]
 
         def write_phones(self,phones,row_index):
             row=self.rows[row_index]
@@ -119,7 +117,7 @@ class ExcelReadWrite:
                 first_name=row[fname_columns[i]]
                 last_name=row[lname_columns[i]]
                 if(not first_name.value):
-                    names.append("")
+                    pass
                 elif(not last_name.value):
                     names.append(first_name.value.strip())
                 else:
@@ -139,28 +137,38 @@ class ExcelReadWrite:
             addresses=[]
             address_columns=self.column_info["address_columns"]
             for column in address_columns:
-                address=self.rows[row_index][column].value.strip()
-                i1=address.lower().find(" apt ")
-                i2=address.lower().find(" unit ")
-                if(i1!=-1):
-                    address=address[:i1]
-                elif(i2!=-1):
-                    address=address[:i2]
-                addresses.append(address.strip())
+                address=self.rows[row_index][column[0]].value.strip()
+                if(address):
+                    i1=address.lower().find(" apt ")
+                    i2=address.lower().find(" unit ")
+                    if(i1!=-1):
+                        address=address[:i1]
+                    elif(i2!=-1):
+                        address=address[:i2]
+                    addresses.append(address.strip())
             return(addresses)
         
         def fetch_units(self,row_index):
             units=[]
-            for address in self.column_info["address_columns"]:
-                address=self.rows[row_index][self.get_column('E')].value.strip()
-                i1=address.lower().find(" apt ")
-                i2=address.lower().find(" unit ")
-                unit=-1
-                if(i1!=-1):
-                    unit=address[i1+4:].strip()
-                elif(i2!=-1):
-                    unit=address[i2+5:].strip()
-                units.append(unit)
+            for column in self.column_info["address_columns"]:
+                if(column[1]!=-1):
+                    unit=self.rows[row_index][column[1]].value.strip()
+                    if(unit):
+                        unit=re.search("[0-9a-zA-Z]+",unit).group()
+                    else:
+                        unit=-1
+                    units.append(unit)
+                else:
+                    address=self.rows[row_index][column[0]].value.strip()
+                    if(address):
+                        i1=address.lower().find(" apt ")
+                        i2=address.lower().find(" unit ")
+                        unit=-1
+                        if(i1!=-1):
+                            unit=address[i1+4:].strip()
+                        elif(i2!=-1):
+                            unit=address[i2+5:].strip()
+                        units.append(unit)
             return(units)
 
         def save(self,filepath):

@@ -1,12 +1,83 @@
 {
-    "Default":{"fname_columns":[2],
-                "lname_columns":[3],
-                "address_columns":[4],
-                "city_columns":[5],
-                "state_columns":[6],
-                "phone_columns":[28, 32, 36, 40, 44, 48, 51, 54, 57, 60],
-                "email_columns":[64, 67, 70, 73, 76],
-                "full_address":"n"
-            }
-
+    "names": [
+        "Default",
+        "Profile 1"
+    ],
+    "Default": {
+        "fname_columns": [
+            2
+        ],
+        "lname_columns": [
+            3
+        ],
+        "address_columns": [
+            [
+                4,
+                -1
+            ]
+        ],
+        "city_columns": [
+            5
+        ],
+        "state_columns": [
+            6
+        ],
+        "phone_columns": [
+            28,
+            32,
+            36,
+            40,
+            44,
+            48,
+            51,
+            54,
+            57,
+            60
+        ],
+        "email_columns": [
+            64,
+            67,
+            70,
+            73,
+            76
+        ]
+    },
+    "Profile 1": {
+        "fname_columns": [
+            3,
+            5
+        ],
+        "lname_columns": [
+            4,
+            6
+        ],
+        "address_columns": [
+            [
+                0,
+                1
+            ],
+            [
+                2,
+                -1
+            ]
+        ],
+        "city_columns": [],
+        "state_columns": [],
+        "phone_columns": [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+        ],
+        "email_columns": [
+            15,
+            16,
+            17,
+            18
+        ]
+    }
 }
