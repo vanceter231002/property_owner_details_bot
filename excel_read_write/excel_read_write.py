@@ -1,7 +1,7 @@
 from openpyxl import load_workbook
 import json
 import re
-
+from ordered_set import OrderedSet
 class ExcelReadWrite:
         def __init__(self,filepath,sheet_no):
             self.wb=load_workbook(filepath)
@@ -170,6 +170,20 @@ class ExcelReadWrite:
                             unit=address[i2+5:].strip()
                         units.append(unit)
             return(units)
+        def fetch_search_addresses(self,row_index):
+            unit_sep_addresses=self.fetch_addresses(row_index)
+            city_states=self.fetch_city_states(row_index)
+            units=self.fetch_units(row_index)
+            addresses=OrderedSet()
+            for j in range(len(units)):
+                if(city_states):
+                    add=f"{unit_sep_addresses[j].lower()} {city_states[j].lower()}"
+                else:
+                    add=unit_sep_addresses[j].lower()
+                if(units[j]!=-1):
+                    add+=f" unit {units[j]}"
+                addresses.add(add)
+            return(addresses)
 
         def save(self,filepath):
             self.wb.save(filepath)

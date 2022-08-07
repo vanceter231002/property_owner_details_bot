@@ -4,13 +4,6 @@ from excel_read_write import excel_read_write
 from ordered_set import OrderedSet
 import re
 
-
-def print_details(phones,emails):
-    for phone in phones:
-        print(phone)
-    for email in emails:
-        print(email)
-
 #The main function that finds details
 def func(browser,names,addresses,city_states):
     unit_addresses=filter(lambda x:x.find("unit")!=-1,addresses)
@@ -34,8 +27,7 @@ def func(browser,names,addresses,city_states):
         return(False)
 
 if __name__ == '__main__':
-
-    browser=find_info.FindInfo()
+    browser=find_info.FindInfo(profile="Profile 2")
     filepath=input("Enter the file path: ")
     savepath=input("Enter save file path: ")
     rw=excel_read_write.ExcelReadWrite(filepath,0)
@@ -63,18 +55,8 @@ if __name__ == '__main__':
             name_list=rw.fetch_names(i)
             name_list=list(filter(lambda a:a!="",name_list))
             print(name_list[0])
-            unit_sep_addresses=rw.fetch_addresses(i)
+            addresses=rw.fetch_search_addresses(i)
             city_states=rw.fetch_city_states(i)
-            units=rw.fetch_units(i)
-            addresses=OrderedSet()
-            for j in range(len(units)):
-                if(city_states):
-                    add=f"{unit_sep_addresses[j].lower()} {city_states[j].lower()}"
-                else:
-                    add=unit_sep_addresses[j].lower()
-                if(units[j]!=-1):
-                    add+=f" unit {units[j]}"
-                addresses.add(add)
             city_states=OrderedSet(city_states)
             if(name_list):
                 func(browser,name_list,addresses,city_states)
@@ -88,7 +70,6 @@ if __name__ == '__main__':
             rw.write_emails(l[1],i)
         except:
             raise
-
     rw.save(savepath)
     print("Details Saved")
     input()
