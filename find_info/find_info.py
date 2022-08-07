@@ -13,7 +13,6 @@ class FindInfo(uc.Chrome):
             self.teardown=teardown
             self.phones=set()
             self.emails=set()
-            os.environ['PATH']+=f";{self.driver_path}"
             #if options=="nolog":
             options=ChromiumOptions()
             options.add_argument(f"--user-data-dir={userdata_dir}")

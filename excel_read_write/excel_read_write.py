@@ -42,13 +42,20 @@ class ExcelReadWrite:
             l1=[]
             l2=[]
             l3=[]
+            
             for i in range(n):
                 l1.append([self.get_column(input(f'Address {i+1}: ')),-1])
                 x=input("Unit column?(Y or N)").lower()
                 if(x=="y"):
                     l1[i][1]=self.get_column(input("Unit Column: "))
-                l2.append(self.get_column(input(f'City {i+1}: ')))
-                l3.append(self.get_column(input(f'State {i+1}: ')))
+                s=input("Specific Format? Y or N: ")
+                s=s.strip().lower()
+                if(s=='n'):
+                    l2.append(self.get_column(input(f'City {i+1}: ')))
+                    l3.append(self.get_column(input(f'State {i+1}: ')))
+                else:
+                    l2.append(-1)
+                    l3.append(-1)
             d['address_columns']=l1
             d['city_columns']=l2
             d['state_columns']=l3
@@ -128,29 +135,47 @@ class ExcelReadWrite:
             city_states=[]
             city_columns=self.column_info["city_columns"]
             state_columns=self.column_info["state_columns"]
+            address_columns=self.column_info["address_columns"]
             for i in range(len(city_columns)):
-                city_state=f"{self.rows[row_index][city_columns[i]].value.strip()} {self.rows[row_index][state_columns[i]].value.strip()}"
+                if(city_columns[i]==-1):
+                    add=self.rows[row_index][address_columns[i]].value.strip()
+                    j=add.find(',')
+                    city_state=re.search("[A-Za-z,]+",add[j+1:]).group()
+                else:
+                    city_state=f"{self.rows[row_index][city_columns[i]].value.strip()} {self.rows[row_index][state_columns[i]].value.strip()}"
                 city_states.append(city_state)
             return(city_states)
         
         def fetch_addresses(self,row_index):
             addresses=[]
             address_columns=self.column_info["address_columns"]
-            for column in address_columns:
-                address=self.rows[row_index][column[0]].value.strip()
-                if(address):
-                    i1=address.lower().find(" apt ")
-                    i2=address.lower().find(" unit ")
-                    if(i1!=-1):
-                        address=address[:i1]
-                    elif(i2!=-1):
-                        address=address[:i2]
+            city_columns=self.column_info["city_columns"]
+            for i in range(len(address_columns)):
+                if(city_columns[i]!=-1):
+                    address=self.rows[row_index][address_columns[i][0]].value.strip()
                     addresses.append(address.strip())
+                else:
+                    address=self.rows[row_index][address_columns[i][0]].value.strip()
+                    j=address.find(",")
+                    address=address[:j]
+                    addresses.append(address)
+            for i in range(len(addresses)):
+                add=addresses[i]
+                if(add):
+                    i1=add.lower().find(" apt ")
+                    i2=add.lower().find(" unit ")
+                    if(i1!=-1):
+                        addresses[i]=add[:i1]
+                    elif(i2!=-1):
+                        addresses[i]=add[:i2]
             return(addresses)
         
         def fetch_units(self,row_index):
             units=[]
+            i=-1
+            city_columns=self.column_info["city_columns"]
             for column in self.column_info["address_columns"]:
+                i+=1
                 if(column[1]!=-1):
                     unit=self.rows[row_index][column[1]].value.strip()
                     if(unit):
@@ -159,7 +184,12 @@ class ExcelReadWrite:
                         unit=-1
                     units.append(unit)
                 else:
-                    address=self.rows[row_index][column[0]].value.strip()
+                    if(city_columns[i]!=-1):
+                        address=self.rows[row_index][column[0]].value.strip()
+                    else:
+                        address=self.rows[row_index][column[0]].value.strip()
+                        j=address.find(',')
+                        address=address[:j]
                     if(address):
                         i1=address.lower().find(" apt ")
                         i2=address.lower().find(" unit ")
@@ -170,6 +200,7 @@ class ExcelReadWrite:
                             unit=address[i2+5:].strip()
                         units.append(unit)
             return(units)
+
         def fetch_search_addresses(self,row_index):
             unit_sep_addresses=self.fetch_addresses(row_index)
             city_states=self.fetch_city_states(row_index)

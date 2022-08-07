@@ -1,45 +1,86 @@
 {
-    "names": [
-        "Default"
+  "names": [
+    "Default",
+    "Manhatten"
+  ],
+  "Default": {
+    "fname_columns": [
+      2
     ],
-    "Default": {
-        "fname_columns": [
-            2
-        ],
-        "lname_columns": [
-            3
-        ],
-        "address_columns": [
-            [
-                4,
-                -1
-            ]
-        ],
-        "city_columns": [
-            5
-        ],
-        "state_columns": [
-            6
-        ],
-        "phone_columns": [
-            28,
-            32,
-            36,
-            40,
-            44,
-            48,
-            51,
-            54,
-            57,
-            60
-        ],
-        "email_columns": [
-            64,
-            67,
-            70,
-            73,
-            76
-        ]
-    }
-  
+    "lname_columns": [
+      3
+    ],
+    "address_columns": [
+      [
+        4,
+        -1
+      ]
+    ],
+    "city_columns": [
+      5
+    ],
+    "state_columns": [
+      6
+    ],
+    "phone_columns": [
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      51,
+      54,
+      57,
+      60
+    ],
+    "email_columns": [
+      64,
+      67,
+      70,
+      73,
+      76
+    ]
+  },
+  "Manhatten": {
+    "fname_columns": [
+      11,
+      13
+    ],
+    "lname_columns": [
+      12,
+      14
+    ],
+    "address_columns": [
+      [
+        0,
+        1
+      ]
+    ],
+    "city_columns": [
+      2
+    ],
+    "state_columns": [
+      3
+    ],
+    "phone_columns": [
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "email_columns": [
+      25,
+      26,
+      27,
+      28,
+      29
+    ]
+  }
 }
