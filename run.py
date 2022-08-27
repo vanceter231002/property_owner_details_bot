@@ -69,7 +69,7 @@ if __name__ == '__main__':
             rw.write_phones(l[0],i)
             rw.write_emails(l[1],i)
         except:
-            raise
+            pass
     rw.save(savepath)
     print("Details Saved")
     input()

@@ -7,25 +7,19 @@ import random
 
 
 
-uc.TARGET_VERSION=104
+uc.TARGET_VERSION=104 #edit this and put your chrome version instead
 class FindInfo(uc.Chrome):
     def __init__(self,userdata_dir=r"--user-data-dir=C:\Users\vansh\AppData\Local\Google\Chrome Beta\User Data",teardown=False,profile="Profile 1"):
             self.teardown=teardown
             self.phones=set()
             self.emails=set()
-            #if options=="nolog":
             options=ChromiumOptions()
             options.add_argument(f"--user-data-dir={userdata_dir}")
             options.add_argument(fr'--profile-directory={profile}')
-            #options.add_argument("--no-first-run")
-            #options.add_argument("--log-level=3")
-            #options.add_experimental_option('excludeSwitches',['enable-logging'])
             options.add_argument("--window-size=1366,768")
-            #options.add_argument("user-agent= ")
-            #options.binary_location="C:\Program Files\Google\Chrome Beta\Application\chrome.exe"
             super().__init__(options=options)
             self.implicitly_wait(15)
-            self.times=[1,1,1.5,2]
+            self.times=[2,3]
 
     def __exit__(self,exc_type,exc_val,exc_tb):
         if self.teardown:
