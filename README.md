@@ -14,7 +14,7 @@ Currently this application is only supported on Windows OS(7 and above).<br>
        py -m pip install openpyxl ordered-set selenium undetected-chromedriver
 3. Install Chrome Browser (Don't install version 103.x) and enter version number in find_info/find_info.py
 4. Create a chrome profile and login to spokeo.
-5. Enter the profile path and profile name in the contructor of find_info in run.py.
+5. Enter the profile path and profile name in the constructor of find_info in run.py.
 6. execute run.py.
 
 ## Credits
