@@ -9,7 +9,7 @@ import random
 
 uc.TARGET_VERSION=104 #edit this and put your chrome version instead
 class FindInfo(uc.Chrome):
-    def __init__(self,userdata_dir=r"--user-data-dir=C:\Users\vansh\AppData\Local\Google\Chrome Beta\User Data",teardown=False,profile="Profile 1"):
+    def __init__(self,userdata_dir=r"C:\Users\vansh\AppData\Local\Google\Chrome Beta\User Data",teardown=False,profile="Profile 1"):
             self.teardown=teardown
             self.phones=set()
             self.emails=set()
@@ -19,7 +19,7 @@ class FindInfo(uc.Chrome):
             options.add_argument("--window-size=1366,768")
             super().__init__(options=options)
             self.implicitly_wait(15)
-            self.times=[2,3]
+            self.times=[1,2]
 
     def __exit__(self,exc_type,exc_val,exc_tb):
         if self.teardown:
@@ -150,6 +150,8 @@ class FindInfo(uc.Chrome):
         else:
             print("No contacts Found")
             return(False)
+            
+    #check if an element is present on the page
     def check_function(self,by,query,element=None,time=0):
         self.implicitly_wait(time)
         try:

@@ -2,17 +2,22 @@ from openpyxl import load_workbook
 import json
 import re
 from ordered_set import OrderedSet
+import os
 class ExcelReadWrite:
         def __init__(self,filepath,sheet_no):
             self.wb=load_workbook(filepath)
             self.sheet=self.wb.worksheets[sheet_no]
             self.rows=list(self.sheet.rows)
-            f=open("excel_read_write/profiles.json")
+            dirpath = os.path.dirname(__file__)
+            self.jsonpath = os.path.join(dirpath, 'profiles.json')
+            f=open(self.jsonpath)
             self.profiles=json.load(f)
             f.close()
             self.column_info=self.profiles["Default"]
 
         def set_profile(self):
+            print("Profiles:")
+            self.print_profile_list()
             name=input("Enter name of the profile: ")
             self.column_info=self.profiles[name]
         
@@ -74,7 +79,7 @@ class ExcelReadWrite:
             self.column_info=d
             self.profiles[name]=d
             self.profiles["names"].append(name)
-            f=open("excel_read_write/profiles.json","w")
+            f=open(self.jsonpath,"w")
             json.dump(self.profiles,f,indent=2)
 
         def get_column(self,string:str):
