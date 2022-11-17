@@ -7,27 +7,20 @@ import random
 
 
 
-uc.TARGET_VERSION=104
+uc.TARGET_VERSION=104 #edit this and put your chrome version instead
 class FindInfo(uc.Chrome):
-    def __init__(self,driver_path="C:\Chrome WS driver",teardown=False,profile="Profile 1"):
-            self.driver_path=driver_path
+    def __init__(self,userdata_dir=r"C:\Users\vansh\AppData\Local\Google\Chrome Beta\User Data",teardown=False,profile="Profile 1"):
             self.teardown=teardown
             self.phones=set()
             self.emails=set()
-            os.environ['PATH']+=f";{self.driver_path}"
-            #if options=="nolog":
             options=ChromiumOptions()
-            options.add_argument(r"--user-data-dir=C:\Users\COMPUTER\AppData\Local\Google\Chrome Beta\User Data")
+            options.add_argument(f"--user-data-dir={userdata_dir}")
             options.add_argument(fr'--profile-directory={profile}')
-            #options.add_argument("--no-first-run")
-            #options.add_argument("--log-level=3")
-            #options.add_experimental_option('excludeSwitches',['enable-logging'])
             options.add_argument("--window-size=1366,768")
-            #options.add_argument("user-agent= ")
-            #options.binary_location="C:\Program Files\Google\Chrome Beta\Application\chrome.exe"
             super().__init__(options=options)
             self.implicitly_wait(15)
-            self.times=[1,1,1.5,2]
+            self.times=[1,2]
+
     def __exit__(self,exc_type,exc_val,exc_tb):
         if self.teardown:
             self.quit()
@@ -39,6 +32,7 @@ class FindInfo(uc.Chrome):
     def clear(self):
         self.phones.clear()
         self.emails.clear()
+
     #land first page
     def land_first_page(self):
         self.get('https://www.spokeo.com/')
@@ -100,6 +94,7 @@ class FindInfo(uc.Chrome):
         #print("Name not found in address lookup") 
         #return(False)    
 
+    #check for the person on a given address unit wise
     def check_unit_wise(self,name):
         unit_elements=self.find_elements(By.XPATH,'//div[contains(@class,"four-column-list-item")]//a[text()="VIEW DETAILS"]')
         links=[element.get_attribute("href") for element in unit_elements]
@@ -122,11 +117,13 @@ class FindInfo(uc.Chrome):
     #         view_details.click()
     #         return(True)
     #     return(False)
-        
+
+    #returns the phones and emails   
     def fetch_details(self):
         l=[self.phones.copy(),self.emails.copy()]
         return(l)
 
+    #verify if 2 names are similar
     def verify_names(self,name1,name2):
         #print(name1,name2)
         l1=name1.split()
@@ -134,6 +131,7 @@ class FindInfo(uc.Chrome):
         if(l2[0] in l1 and l2[-1] in l1):
             return(True)
         return(False)
+
     #get details of a name card
     def get_details(self):
         if(len(self.phones)>=10 and len(self.emails)>=5):
@@ -152,6 +150,8 @@ class FindInfo(uc.Chrome):
         else:
             print("No contacts Found")
             return(False)
+            
+    #check if an element is present on the page
     def check_function(self,by,query,element=None,time=0):
         self.implicitly_wait(time)
         try:

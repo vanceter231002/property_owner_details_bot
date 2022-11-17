@@ -1,14 +1,8 @@
 
 from find_info import find_info
-from find_info import excel_read_write
+from excel_read_write import excel_read_write
 from ordered_set import OrderedSet
-
-
-def print_details(phones,emails):
-    for phone in phones:
-        print(phone)
-    for email in emails:
-        print(email)
+import re
 
 #The main function that finds details
 def func(browser,names,addresses,city_states):
@@ -33,29 +27,37 @@ def func(browser,names,addresses,city_states):
         return(False)
 
 if __name__ == '__main__':
-    rw=excel_read_write.ExcelReadWrite("../Files/copy.xlsx",0)
-    browser=find_info.FindInfo()
-
-    for i in range(186,190):
+    browser=find_info.FindInfo(profile="Profile 2")
+    filepath=input("Enter the file path: ")
+    savepath=input("Enter save file path: ")
+    rw=excel_read_write.ExcelReadWrite(filepath,0)
+    i=input("1.Select from existing profiles\n2.Create new profile\n")
+    if(i=="1"):
+        while(True):
+            try:
+                rw.set_profile()
+                break
+            except:
+                print("Invalid profile name")
+                
+    elif(i=="2"):
+        rw.create_profile()
+    else:
+        print("Invalid Option")
+        exit()
+    
+    row_start=int(input("Enter starting row number: "))
+    row_end=int(input("Enter ending row number: "))
+    input("Press anything to start execution")
+    for i in range(row_start-1,row_end):
         try:
             l=[[],[]]
             name_list=rw.fetch_names(i)
             name_list=list(filter(lambda a:a!="",name_list))
             print(name_list[0])
-            addresses=OrderedSet()
-            add=f"{rw.fetch_address(i).lower()} {rw.fetch_city_state(i).lower()}"
-            if(rw.fetch_unit(i)!=""):
-                add+=f" unit {rw.fetch_unit(i)}"
-            addresses.add(add)
-            alt_add=f"{rw.fetch_alt_address(i).lower()} {rw.fetch_alt_city_state(i).lower()}"
-            if(rw.fetch_alt_unit(i)!=""):
-                alt_add+=f" unit {rw.fetch_alt_unit(i)}"
-            addresses.add(alt_add)
-            city_states=OrderedSet()
-            city_state=rw.fetch_city_state(i)
-            alt_city_state=rw.fetch_alt_city_state(i)
-            city_states.add(city_state.lower())
-            city_states.add(alt_city_state.lower())
+            addresses=rw.fetch_search_addresses(i)
+            city_states=rw.fetch_city_states(i)
+            city_states=OrderedSet(city_states)
             if(name_list):
                 func(browser,name_list,addresses,city_states)
                 l=browser.fetch_details()
@@ -66,9 +68,9 @@ if __name__ == '__main__':
                 print("Not Found")
             rw.write_phones(l[0],i)
             rw.write_emails(l[1],i)
+            rw.save(savepath)
         except:
-            raise
-
-    rw.save("../Files/copy.xlsx")
+            pass
+    
     print("Details Saved")
     input()
