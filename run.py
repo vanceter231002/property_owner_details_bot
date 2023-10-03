@@ -27,7 +27,7 @@ def func(browser,names,addresses,city_states):
         return(False)
 
 if __name__ == '__main__':
-    browser=find_info.FindInfo(profile="Profile 2")
+    browser=find_info.FindInfo(profile="Profile 1")
     filepath=input("Enter the file path: ")
     savepath=input("Enter save file path: ")
     rw=excel_read_write.ExcelReadWrite(filepath,0)
