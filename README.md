@@ -1,4 +1,4 @@
-# Spokeo Bot
+# Property Owner Details Bot
 
 ## Description
 - A bot that takes a name(or names) and its corresponding address(or addresses) from an excel file as input, finds a matching profile on spokeo.com and if found, and saves its contact information as output.
